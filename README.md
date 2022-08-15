@@ -13,7 +13,7 @@ Thirdly, you mustn't mount just into `/sdcard`. Your real mount point have to be
 
 ## Supported filesystems
 
-All filesystems which your device support.
+All filesystems which your device support besides "overlay"-based filesystems *(aufs, overlayfs, unionfs)*
 
 ## Usage
 ```
