@@ -1,0 +1,136 @@
+#!/system/bin/sh
+
+export DEFOPT=nosuid,nodev,noexec,noatime,context=u:object_r:sdcardfs:s0,uid=0,gid=9997,fmask=660,dmask=771,nouser_xattr
+
+help() {
+    echo "Usage: sdmount (source) -t (type) -o (options) (dest)"
+    echo "\nMounts device or folder into /sdcard correctly"
+    echo "\$DEST is set as /uid/sdcard_target. For example, if you want mount into /storage/emulated/1/Music, write mount (source) -t (type) -o (options) /1/Music. Default uid is 0"
+    echo "There is can be recursive bind-mount only by '-o rbind'"
+    echo "overlayfs is not supported, use sdmount-overlay instead"
+}
+
+optcheck() {
+    if [[ ! $(echo $1 | grep "context=") = "" ]]; then
+        echo "You can't setup specific SELinux context for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "uid=") = "" ]]; then
+        echo "You can't setup specific UID for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "gid=") = "" ]]; then
+        echo "You can't setup specific GID for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "mask=") = "" ]]; then
+        echo "You can't setup specific u/f/dmask for mounting into /storage" > /dev/stdere
+        return 1
+    elif [[ ! $(echo $1 | grep "user_xattr") = "" ]]; then
+        echo "You can't setup xattr into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "atime") = "" ]]; then
+        echo "You can't setup atime into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "exec") = "" ]]; then
+        echo "You can't setup exec into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "suid") = "" ]]; then
+        echo "You can't setup suid into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "dev") = "" ]]; then
+        echo "You can't setup dev into /storage" > /dev/stderr
+        return 1
+    else
+        return 0
+    fi
+}
+
+if [[ $1 = "-h" ]] || [[ $1 = "--help" ]]; then
+    help
+else
+    if [ -d $1 ]; then
+        if [[ $2 = "-t" ]]; then
+            echo "-t isn't usable with directory" > /dev/stderr
+            exit 1
+        elif [[ $2 = "-o" ]]; then
+            optcheck $3
+            if [[ $? = 1 ]]; then
+                exit 1
+            else
+                su -M bindfs -o nosuid,nodev,noexec,noatime,context=u:object_r:sdcardfs:s0,$3 -u 0 -g 9997 -p a-rwx,ug+rw,ugo+X --create-with-perms=a-rwx,ug+rw,ugo+X --xattr-none --chown-ignore --chgrp-ignore --chmod-ignore $1 /mnt/runtime/write/emulated$4
+                if [[ ! $? = 0 ]]; then
+                    su -M mount -o $DEFOPT,$3 /mnt/runtime/write/emulated$5
+                    if [[ ! $? = 0 ]]; then
+                        echo "Can't mount $1 to /storage/emulated$4" > /dev/stderr
+                        exit 1
+                    fi
+                fi
+            fi
+        else
+            mount --bind -o $DEFOPT $1 /mnt/runtime/write/emulated$2
+        fi
+    elif [ -f $1 ]; then
+        export LOSETUP=$(losetup -f)
+        if [[ $LOSETUP = "" ]]; then
+            echo "Your device does not support loop devices" > /dev/stderr
+            exit 1
+        else
+            losetup $LOSETUP $1
+            if [[ $2 = "-t" ]]; then
+                if [[ $4 = "-o" ]]; then
+                    optcheck $5
+                    if [[ $? = 0 ]]; then
+                        mount -t $3 -o $DEFOPT,$5 $LOSETUP /mnt/runtime/write/emulated$6
+                    else
+                        exit 1
+                    fi
+                else
+                    mount -t $3 -o $DEFOPT $LOSETUP /mnt/runtime/write/emulated$4
+                fi
+            elif [[ $2 = "-o" ]]; then
+                if [[ $4 = "-t" ]]; then
+                    optcheck $3
+                    if [[ $? = 0 ]]; then
+                        mount -t $5 -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$6
+                    else
+                        exit 1
+                    fi
+                else
+                    optcheck $3
+                    if [[ $? = 0 ]]; then
+                        mount -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$4
+                    else
+                        exit 1
+                    fi
+                fi
+            else
+                exit 1
+            fi
+        fi
+    else
+        if [[ $2 = "-o" ]]; then
+            optcheck $3
+            if [[ $? = 0 ]]; then
+                if [[ $4 = "-t" ]]; then
+                    mount -t $5 -o $DEFOPT,$3 $1 /mnt/runtime/write/emulated$6
+                else
+                    echo "Write type of filesystem!" > /dev/stderr
+                    exit 1
+                fi
+            else
+                exit 1
+            fi
+        elif [[ $2 = "-t" ]]; then
+            if [[ $4 = "-o" ]]; then
+                optcheck $5
+                if [[ $? = 0 ]]; then
+                    mount -t $3 -o $DEFOPT,$5 $1 /mnt/runtime/write/emulated$6
+                else
+                    exit 1
+                fi
+            else
+                mount -t $3 -o $DEFOPT $1 /mnt/runtime/write/emulated$4
+            fi
+        else
+            help
+        fi
+    fi
+fi
