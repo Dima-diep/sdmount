@@ -14,3 +14,12 @@ Thirdly, you mustn't mount just into `/sdcard`. Your real mount point have to be
 ## Supported filesystems
 
 All filesystems which your device support.
+
+## Usage
+```
+ ~ # sdmount /dev/sda4 -t ext3 -o ro /0/Music
+# Mounts /dev/sda4 into /storage/emulated/0/Music
+ ~ # sdmount ./loop.img -t ext2 -o rw /0/loop
+# Mounts ./loop.img into /storage/emulated/0/loop
+# there is auto-losetup for loop devices
+```
