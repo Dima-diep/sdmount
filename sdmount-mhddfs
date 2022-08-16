@@ -1,0 +1,438 @@
+#!/system/bin/sh
+
+export DEFOPT=nosuid,nodev,noexec,noatime,context=u:object_r:sdcardfs:s0,uid=0,gid=9997,fmask=660,dmask=771,nouser_xattr
+
+help() {
+    echo "Usage: sdmount-mhddfs -mlimit (limit) -logfile (logfile) -loglevel (level) (src1,src2) (dest)"
+    echo "\nMounts device or folder into /sdcard correctly"
+    echo "\$DEST is set as /uid/sdcard_target. For example, if you want mount into /storage/emulated/1/Music, write mount (source) -t (type) -o (options) /1/Music. Default uid is 0"
+    echo "There is can be recursive bind-mount only by '-o rbind'"
+    echo "overlayfs is not supported, use sdmount-overlay instead"
+}
+
+optcheck() {
+    if [[ ! $(echo $1 | grep "context=") = "" ]]; then
+        echo "You can't setup specific SELinux context for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "uid=") = "" ]]; then
+        echo "You can't setup specific UID for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "gid=") = "" ]]; then
+        echo "You can't setup specific GID for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "mask=") = "" ]]; then
+        echo "You can't setup specific u/f/dmask for mounting into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "user_xattr") = "" ]]; then
+        echo "You can't setup xattr into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "atime") = "" ]]; then
+        echo "You can't setup atime into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "exec") = "" ]]; then
+        echo "You can't setup exec into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "suid") = "" ]]; then
+        echo "You can't setup suid into /storage" > /dev/stderr
+        return 1
+    elif [[ ! $(echo $1 | grep "dev") = "" ]]; then
+        echo "You can't setup dev into /storage" > /dev/stderr
+        return 1
+    else
+        return 0
+    fi
+}
+
+if [[ $1 = "-h" ]] || [[ $1 = "--help" ]]; then
+    help
+elif [[ $1 = "-o" ]]; then
+    if [[ $3 = "-mlimit" ]]; then
+        if [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o mlimit=$4,logfile=$6,loglevel=$8,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                else
+                    exit 1
+                fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o mlimit=$4,logfile=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o mlimit=$4,logfile=$8,loglevel=$6,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                else
+                    exit 1
+                fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o mlimit=$4,loglevel=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $2
+            if [[ $? = 0 ]]; then
+                su -M -c mhddfs -o mlimit=$4,$DEFOPT,$2 $5 /mnt/runtime/write/emulated$6
+            else
+                exit 1
+            fi
+        fi
+    elif [[ $3 = "-logfile" ]]; then
+        if [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-mlimit" ]]; then
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o logfile=$4,loglevel=$6,mlimit=$8,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                else
+                    exit 1
+                fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o logfile=$4,loglevel=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-mlimit" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o logfile=$4,loglevel=$8,mlimit=$6,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                else
+                    exit 1
+                fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o logfile=$4,mlimit=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $2
+            if [[ $? = 0 ]]; then
+                su -M -c mhddfs -o logfile=$4,$DEFOPT,$2 $5 /mnt/runtime/write/emulated$6
+            else
+                exit 1
+            fi
+        fi
+    elif [[ $3 = "-loglevel" ]]; then
+        if [[ $5 = "-mlimit" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                 optcheck $2
+                 if [[ $? = 0 ]]; then
+                     su -M -c mhddfs -o loglevel=$4,mlimit=$6,logfile=$8,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                 else
+                     exit 1
+                 fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o loglevel=$4,mlimit=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-mlimit" ]]; then
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o loglevel=$4,logfile=$6,mlimit=$8,$DEFOPT,$2 $9 /mnt/runtime/write/emulated${10}
+                else
+                    exit 1
+                fi
+            else
+                optcheck $2
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o loglevel=$4,logfile=$6,$DEFOPT,$2 $7 /mnt/runtime/write/emulated$8
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $2
+            if [[ $? = 0 ]]; then
+                su -M -c mhddfs -o loglevel=$4,$DEFOPT,$2 $5 /mnt/runtime/write/emulated$6
+            else
+                exit 1
+            fi
+        fi
+    else
+        optcheck $2
+        if [[ $? = 0 ]]; then
+            su -M -c mhddfs -o $DEFOPT,$2 /mnt/runtime/write/emulated$3
+        else
+            exit 1
+        fi
+    fi
+elif [[ $1 = "-mlimit" ]]; then
+    if [[ $3 = "-o" ]]; then
+        if [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                    su -M -c mhddfs -o
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $4
+            if [[ $? = 0 ]]; then
+            else
+                exit 1
+            fi
+        fi
+    elif [[ $3 = "-logfile" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+            else
+            fi
+        elif [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        else
+        fi
+    elif [[ $3 = "-loglevel" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        elif [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        else
+        fi
+    else
+    fi
+elif [[ $1 = "-logfile" ]]; then
+    if [[ $3 = "-mlimit" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        else
+        fi
+    elif [[ $3 = "-o" ]]; then
+        if [[ $5 = "-mlimit" ]]; then
+            if [[ $7 = "-loglevel" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-loglevel" ]]; then
+            if [[ $7 = "-mlimit" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $4
+            if [[ $? = 0 ]]; then
+            else
+                exit 1
+            fi
+        fi
+    elif [[ $3 = "-loglevel" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-loglimit" ]]; then
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-loglimit" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        else
+        fi
+    else
+    fi
+elif [[ $1 = "-loglevel" ]]; then
+    if [[ $3 = "-mlimit" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+            else
+            fi
+        else
+        fi
+    elif [[ $3 = "-o" ]]; then
+        if [[ $5 = "-mlimit" ]]; then
+            if [[ $7 = "-logfile" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-logfile" ]]; then
+            if [[ $7 = "-mlimit" ]]; then
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $4
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        else
+            optcheck $4
+            if [[ $? = 0 ]]; then
+            else
+                exit 1
+            fi
+        fi
+    elif [[ $3 = "-logfile" ]]; then
+        if [[ $5 = "-o" ]]; then
+            if [[ $7 = "-mlimit" ]]; then
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+                optcheck $6
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            fi
+        elif [[ $5 = "-mlimit" ]]; then
+            if [[ $7 = "-o" ]]; then
+                optcheck $8
+                if [[ $? = 0 ]]; then
+                else
+                    exit 1
+                fi
+            else
+            fi
+        else
+        fi
+    else
+    fi
+fi

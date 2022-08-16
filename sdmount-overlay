@@ -36,85 +36,88 @@ optcheck() {
 
 help() {
 	echo "Usage: sdmount-overlay -lowerdir (lowerdir1),(lowerdir2) -upperdir (upperdir1),(upperdir2) -workdir (workdir) -o (options) (mountpoint)"
+        echo "Mounts overlayfs into /sdcard correctly"
 	echo "(mountpoint) is /(user)/mountpoint. If your mountpoint is /0/Music, it mounts into /storage/emulated/0/Music"
 }
 
-if [[ $1 = "-lowerdir" ]]; then
+if [[ $1 = "-h" ]] || [[ $1 = "--help" ]]; then
+    help
+elif [[ $1 = "-lowerdir" ]]; then
     if [[ $3 = "-upperdir" ]]; then
         if [[ $5 = "-workdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$4,workdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
             fi
         else
-            su -M mount.overlay -o lowerdir=$2,upperdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
+            su -M -c mount.overlay -o lowerdir=$2,upperdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
         fi
     elif [[ $3 = "-workdir" ]]; then
         if [[ $5 = "-upperdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                     su -M mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$4,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                     su -M -c mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$4,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$8,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$8,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$2,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
             fi
         else
-            su -M mount.overlay -o lowerdir=$2,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
+            su -M -c mount.overlay -o lowerdir=$2,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
         fi
     elif [[ $3 = "-o" ]]; then
         if [[ $5 = "-upperdir" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$8,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$6,workdir=$8,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -123,14 +126,14 @@ if [[ $1 = "-lowerdir" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,upperdir=$8,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$2,upperdir=$8,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$2,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$2,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -138,13 +141,13 @@ if [[ $1 = "-lowerdir" ]]; then
         else
             optcheck $4
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o lowerdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o lowerdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
         fi
     else
-        su -M mount.overlay -o lowerdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
+        su -M -c mount.overlay -o lowerdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
     fi
 elif [[ $1 = "-upperdir" ]]; then
     if [[ $3 = "-lowerdir" ]]; then
@@ -152,74 +155,75 @@ elif [[ $1 = "-upperdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$4,workdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
             fi
         else
-            su -M mount.overlay -o upperdir=$2,lowerdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
+            su -M -c mount.overlay -o upperdir=$2,lowerdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
         fi
     elif [[ $3 = "-workdir" ]]; then
         if [[ $5 = "-lowerdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$6,workdir=$4,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$6,workdir=$4,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o upperdir=$2,lowerdir=$6,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o upperdir=$2,lowerdir=$6,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$8,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$8,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$2,workdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
             fi
         else
+            su -M -c mount.overlay -o upperdir=$2,workdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
         fi
     elif [[ $3 = "-o" ]]; then
         if [[ $5 = "-lowerdir" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,workdir=$8,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,workdir=$8,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -228,14 +232,14 @@ elif [[ $1 = "-upperdir" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,lowerdir=$8,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$2,lowerdir=$8,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$2,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$2,workdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -243,13 +247,13 @@ elif [[ $1 = "-upperdir" ]]; then
         else
             optcheck $4
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o upperdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o upperdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
         fi
     else
-        su -M mount.overlay -o upperdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
+        su -M -c mount.overlay -o upperdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
     fi
 elif [[ $1 = "-workdir" ]]; then
     if [[ $3 = "-upperdir" ]]; then
@@ -257,25 +261,25 @@ elif [[ $1 = "-workdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,upperdir=$4,lowerdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,upperdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o workdir=$2,upperdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -287,45 +291,45 @@ elif [[ $1 = "-workdir" ]]; then
             if [[ $7 = "-o" ]]; then
                 optcheck $8
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$6,$DEFOPT,$8 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
-                su -M mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
+                su -M -c mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$6,$DEFOPT /mnt/runtime/write/emulated$7
             fi
         elif [[ $5 = "-o" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,lowerdir=$4,upperdir=$8,$DEFOPT,$6 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $6
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,lowerdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o workdir=$2,lowerdir=$4,$DEFOPT,$6 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
             fi
         else
-            su -M mount.overlay -o workdir=$2,lowerdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
+            su -M -c mount.overlay -o workdir=$2,lowerdir=$4,$DEFOPT /mnt/runtime/write/emulated$5
         fi
     elif [[ $3 = "-o" ]]; then
         if [[ $5 = "-upperdir" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,lowerdir=$8,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,lowerdir=$8,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o workdir=$2,upperdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -334,14 +338,14 @@ elif [[ $1 = "-workdir" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,upperdir=$8,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o workdir=$2,upperdir=$8,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $4
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o workdir=$2,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o workdir=$2,lowerdir=$6,$DEFOPT,$4 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -349,13 +353,13 @@ elif [[ $1 = "-workdir" ]]; then
         else
             optcheck $4
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o workdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o workdir=$2,$DEFOPT,$4 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
         fi
     else
-        su -M mount.overlay -o workdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
+        su -M -c mount.overlay -o workdir=$2,$DEFOPT /mnt/runtime/write/emulated$3
     fi
 elif [[ $1 = "-o" ]]; then
     if [[ $3 = "-workdir" ]]; then
@@ -363,14 +367,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$8,upperdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$8,upperdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -379,14 +383,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$8,lowerdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$8,lowerdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$6,workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -394,7 +398,7 @@ elif [[ $1 = "-o" ]]; then
         else
             optcheck $2
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o workdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
@@ -404,14 +408,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-lowerdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$4,workdir=$6,lowerdir=$8,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$4,workdir=$6,lowerdir=$8,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -420,14 +424,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$4,workdir=$8,lowerdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$4,workdir=$8,lowerdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$4,lowerdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o upperdir=$4,lowerdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -435,7 +439,7 @@ elif [[ $1 = "-o" ]]; then
         else
             optcheck $2
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o upperdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o upperdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
@@ -445,14 +449,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-upperdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o upperdir=$8,lowerdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o upperdir=$8,lowerdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$4,workdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -461,14 +465,14 @@ elif [[ $1 = "-o" ]]; then
             if [[ $7 = "-workdir" ]]; then
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$4,upperdir=$6,workdir=$8,$DEFOPT,$2 /mnt/runtime/write/emulated$9
+                    su -M -c mount.overlay -o lowerdir=$4,upperdir=$6,workdir=$8,$DEFOPT,$2 /mnt/runtime/write/emulated$9
                 else
                     exit 1
                 fi
             else
                 optcheck $2
                 if [[ $? = 0 ]]; then
-                    su -M mount.overlay -o lowerdir=$4,upperdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
+                    su -M -c mount.overlay -o lowerdir=$4,upperdir=$6,$DEFOPT,$2 /mnt/runtime/write/emulated$7
                 else
                     exit 1
                 fi
@@ -476,7 +480,7 @@ elif [[ $1 = "-o" ]]; then
         else
             optcheck $2
             if [[ $? = 0 ]]; then
-                su -M mount.overlay -o lowerdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
+                su -M -c mount.overlay -o lowerdir=$4,$DEFOPT,$2 /mnt/runtime/write/emulated$5
             else
                 exit 1
             fi
