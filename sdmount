@@ -65,7 +65,7 @@ else
                 fi
             fi
         else
-            mount --bind -o $DEFOPT $1 /mnt/runtime/write/emulated$2
+            su -M mount --bind -o $DEFOPT $1 /mnt/runtime/write/emulated$2
         fi
     elif [ -f $1 ]; then
         export LOSETUP=$(losetup -f)
@@ -78,25 +78,25 @@ else
                 if [[ $4 = "-o" ]]; then
                     optcheck $5
                     if [[ $? = 0 ]]; then
-                        mount -t $3 -o $DEFOPT,$5 $LOSETUP /mnt/runtime/write/emulated$6
+                        su -M mount -t $3 -o $DEFOPT,$5 $LOSETUP /mnt/runtime/write/emulated$6
                     else
                         exit 1
                     fi
                 else
-                    mount -t $3 -o $DEFOPT $LOSETUP /mnt/runtime/write/emulated$4
+                    su -M mount -t $3 -o $DEFOPT $LOSETUP /mnt/runtime/write/emulated$4
                 fi
             elif [[ $2 = "-o" ]]; then
                 if [[ $4 = "-t" ]]; then
                     optcheck $3
                     if [[ $? = 0 ]]; then
-                        mount -t $5 -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$6
+                        su -M mount -t $5 -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$6
                     else
                         exit 1
                     fi
                 else
                     optcheck $3
                     if [[ $? = 0 ]]; then
-                        mount -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$4
+                        su -M mount -o $DEFOPT,$3 $LOSETUP /mnt/runtime/write/emulated$4
                     else
                         exit 1
                     fi
@@ -110,7 +110,7 @@ else
             optcheck $3
             if [[ $? = 0 ]]; then
                 if [[ $4 = "-t" ]]; then
-                    mount -t $5 -o $DEFOPT,$3 $1 /mnt/runtime/write/emulated$6
+                    su -M mount -t $5 -o $DEFOPT,$3 $1 /mnt/runtime/write/emulated$6
                 else
                     echo "Write type of filesystem!" > /dev/stderr
                     exit 1
@@ -122,12 +122,12 @@ else
             if [[ $4 = "-o" ]]; then
                 optcheck $5
                 if [[ $? = 0 ]]; then
-                    mount -t $3 -o $DEFOPT,$5 $1 /mnt/runtime/write/emulated$6
+                    su -M mount -t $3 -o $DEFOPT,$5 $1 /mnt/runtime/write/emulated$6
                 else
                     exit 1
                 fi
             else
-                mount -t $3 -o $DEFOPT $1 /mnt/runtime/write/emulated$4
+                su -M mount -t $3 -o $DEFOPT $1 /mnt/runtime/write/emulated$4
             fi
         else
             help
