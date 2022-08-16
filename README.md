@@ -13,7 +13,7 @@ Thirdly, you mustn't mount just into `/sdcard`. Your real mount point have to be
 
 ## Supported filesystems
 
-All filesystems which your device support besides "overlay"-based filesystems *(aufs, overlayfs, unionfs, mhddfs)*
+All filesystems which your device support besides "overlay"-based filesystems *(aufs, unionfs, mhddfs)*
 
 ## Usage
 ```
@@ -22,4 +22,8 @@ All filesystems which your device support besides "overlay"-based filesystems *(
  ~ # sdmount ./loop.img -t ext2 -o rw /0/loop
 # Mounts ./loop.img into /storage/emulated/0/loop
 # there is auto-losetup for loop devices
+```
+For overlayfs, use `sdmount-overlay`:
+```
+ ~ # sdmount-overlay -lowerdir /data/lowerdir,/data/lowerdir2 -upperdir /data/upperdir -workdir /data/workdir -o (opts) /0/overlayed
 ```
