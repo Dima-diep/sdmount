@@ -21,7 +21,7 @@ optcheck() {
         echo "You can't setup specific GID for mounting into /storage" > /dev/stderr
         return 1
     elif [[ ! $(echo $1 | grep "mask=") = "" ]]; then
-        echo "You can't setup specific u/f/dmask for mounting into /storage" > /dev/stdere
+        echo "You can't setup specific u/f/dmask for mounting into /storage" > /dev/stderr
         return 1
     elif [[ ! $(echo $1 | grep "user_xattr") = "" ]]; then
         echo "You can't setup xattr into /storage" > /dev/stderr
