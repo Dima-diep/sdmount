@@ -13,7 +13,7 @@ Thirdly, you mustn't mount just into `/sdcard`. Your real mount point have to be
 
 ## Supported filesystems
 
-All filesystems which your device support besides "overlay"-based filesystems *(aufs, unionfs, mhddfs)*
+All filesystems which your device support besides "overlay"-based filesystems *(aufs, unionfs)*
 
 ## Usage
 ```
@@ -26,4 +26,8 @@ All filesystems which your device support besides "overlay"-based filesystems *(
 For overlayfs, use `sdmount-overlay`:
 ```
  ~ # sdmount-overlay -lowerdir /data/lowerdir,/data/lowerdir2 -upperdir /data/upperdir -workdir /data/workdir -o (opts) /0/overlayed
+```
+For mhddfs, use `sdmount-mhddfs`:
+```
+ ~ # sdmount-mhddfs -o rw -mlimit=250G -logfile=/data/mhddfs.log -loglevel=[0-2] /data/dir1,/data/dir2 /mnt/expand
 ```
